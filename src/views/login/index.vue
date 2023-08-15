@@ -1,14 +1,23 @@
 <template>
   <div class="login-container">
-    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
-
+    <el-form
+      ref="loginForm"
+      :model="loginForm"
+      :rules="loginRules"
+      class="login-form"
+      auto-complete="on"
+      label-position="left"
+    >
       <div class="title-container">
         <h3 class="title">GEEKPLUS ADMIN</h3>
       </div>
 
       <el-form-item prop="userName">
         <span class="svg-container">
-          <svg-icon icon-class="user" />
+          <svg-icon 
+          slot="prefix"
+          icon-class="user"
+          class="el-input__icon input-icon" />
         </span>
         <el-input
           ref="userName"
@@ -23,7 +32,10 @@
 
       <el-form-item prop="password">
         <span class="svg-container">
-          <svg-icon icon-class="password" />
+          <svg-icon 
+          slot="prefix"
+          icon-class="password"
+          class="el-input__icon input-icon" />
         </span>
         <el-input
           :key="passwordType"
@@ -36,39 +48,45 @@
           auto-complete="on"
           @keyup.enter.native="handleLogin"
         />
-        <span class="show-pwd" v-if="!rememberPwd" @click="showPwd">
-          <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
-        </span>
-      </el-form-item>
-
-      <el-form-item prop="validateCode">
-        <span class="svg-container">
+        <span class="show-pwd" @click="showPwd" v-if="!rememberPwd">
           <svg-icon
-            slot="prefix"
-            icon-class="validCode"
-            class="el-input__icon input-icon"
+            :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"
           />
         </span>
-        <el-input
-          v-model="loginForm.validateCode"
-          auto-complete="off"
-          placeholder="验证码"
-          style="width: 60%"
-          @keyup.enter.native="handleLogin"
-        >
-        </el-input>
+      </el-form-item>
+      <div class="validateCode-div">
+        <el-form-item class="validateCode-div-item" prop="validateCode">
+          <span class="svg-container">
+            <svg-icon
+              slot="prefix"
+              icon-class="validCode"
+              class="el-input__icon input-icon"
+            />
+          </span>
+          <el-input
+            v-model="loginForm.validateCode"
+            auto-complete="off"
+            placeholder="验证码"
+            @keyup.enter.native="handleLogin"
+          >
+          </el-input>
+        </el-form-item>
         <div class="login-code">
           <img :src="codeUrl" @click="getCode" />
         </div>
-      </el-form-item>
+      </div>
       <el-checkbox
         v-model="loginForm.rememberMe"
         style="margin: 0px 0px 25px 0px"
         >记住密码</el-checkbox
       >
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" 
-        @click.native.prevent="handleLogin" >
+      <el-button
+        :loading="loading"
+        type="primary"
+        style="width: 100%; margin-bottom: 30px"
+        @click.native.prevent="handleLogin"
+      >
         <!-- Login -->
         <span v-if="!loading">登 录</span>
         <span v-else>登 录 中...</span>
@@ -78,7 +96,6 @@
         <span style="margin-right:20px;">username: admin</span>
         <span> password: any</span>
       </div> -->
-
     </el-form>
   </div>
 </template>
@@ -86,8 +103,8 @@
 <script>
 import { getMenuTree, getCaptchaImage } from "@/api/system/user";
 import { validUsername } from '@/utils/validate'
-import Cookies from 'js-cookie'
-import { encrypt,decrypt } from '@/utils/jsencrypt'
+import Cookies from "js-cookie";
+import { encrypt, decrypt } from '@/utils/jsencrypt'
 
 export default {
   name: 'Login',
@@ -110,15 +127,15 @@ export default {
       loginForm: {
         userName: '',
         password: '',
-        validateCode:'',
-        validateKey:'',
+        validateCode: '',
+        validateKey: '',
         rememberMe: false
       },
       rememberPwd: false,
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }],
-        validateCode: [{required: true, trigger: "blur", message: "验证码不能为空"}],
+        validateCode: [{ required: true, trigger: "blur", message: "验证码不能为空" }],
       },
       loading: false,
       passwordType: 'password',
@@ -128,13 +145,13 @@ export default {
   },
   watch: {
     $route: {
-      handler: function(route) {
+      handler: function (route) {
         this.redirect = route.query && route.query.redirect
       },
       immediate: true,
     }
   },
-  created(){
+  created() {
     this.getCode();
     this.getCookie();
   },
@@ -152,10 +169,10 @@ export default {
       const rememberMe = Cookies.get("rememberPwd")
       this.loginForm = {
         userName: userName === undefined ? this.loginForm.userName : userName,
-        password: password === undefined ? this.loginForm.password : this.Base64.decode(password),
+        password: password === undefined ? this.loginForm.password : decrypt(password),
         rememberMe: rememberMe === undefined ? false : Boolean(rememberMe)
       };
-      this.rememberPwd=rememberMe === undefined ? false : Boolean(rememberMe);
+      this.rememberPwd = rememberMe === undefined ? false : Boolean(rememberMe)
     },
     showPwd() {
       if (!this.rememberPwd) {
@@ -172,10 +189,10 @@ export default {
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
-          this.loading = true
+          this.loading = true;
           if (this.loginForm.rememberMe) {
             Cookies.set("userName", this.loginForm.userName, { expires: 30 });
-            Cookies.set("password", this.Base64.encode(this.loginForm.password), { expires: 30 });
+            Cookies.set("password", encrypt(this.loginForm.password), { expires: 30 });
             Cookies.set("rememberPwd", this.loginForm.rememberMe, { expires: 30 });
           } else {
             Cookies.remove("userName");
@@ -202,8 +219,8 @@ export default {
 /* 修复input 背景不协调 和光标变色 */
 /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
 
-$bg:#283443;
-$light_gray:#fff;
+$bg: #283443;
+$light_gray: #fff;
 $cursor: #fff;
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
@@ -246,16 +263,17 @@ $cursor: #fff;
 </style>
 
 <style lang="scss" scoped>
-$bg:#2d3a4b;
-$dark_gray:#889aa4;
-$light_gray:#eee;
+$bg: #2d3a4b;
+$dark_gray: #889aa4;
+$light_gray: #eee;
 
 .login-container {
   min-height: 100%;
   width: 100%;
+  /*opacity: 0.6;*/
   /* background-color: $bg; */
-  background:no-repeat center url("../../assets/image/bg1.jpeg");
-  background-position:center;
+  background: no-repeat center url("../../assets/image/bg1.jpeg");
+  background-position: center;
   background-size: cover;
   top: 0;
   left: 0;
@@ -271,22 +289,24 @@ $light_gray:#eee;
     margin: 0 auto;
     overflow: hidden;
   }
-
+  .validateCode-div {
+    display: flex;
+    flex-direction: row;
+    flex-flow: wrap;
+  }
+  .validateCode-div-item {
+    flex-grow: 1;
+    flex-shrink: 1;
+  }
   .login-code {
-    width: 30%;
-    height:auto;
-    float: right;
+    width: fit-content;
     margin: 2px auto;
-    position: relative;
-    display: table-cell;
-    vertical-align: middle;
+    display: grid;
+    justify-content: end;
+    align-items: start;
+    justify-items: end;
     img {
       cursor: pointer;
-      vertical-align: middle;
-      align-items: center;
-      float: right;
-      position: relative;
-      margin: 1px auto 1px auto;
     }
   }
 
