@@ -63,9 +63,11 @@
             </el-dropdown-item>
           </router-link>
           <a target="_blank" href="https://github.com/geekgarry">
-            <el-dropdown-item><i class="el-icon-fork-spoon"></i>Github</el-dropdown-item>
+            <el-dropdown-item>
+              <!-- <i class="el-icon-fork-spoon"></i> -->
+              <i><svg-icon icon-class="github"/></i>Github</el-dropdown-item>
           </a>
-          <a target="_blank" href="https://github.com/geekgarry">
+          <a target="_blank" href="https://github.com/geekgarry/geekplus-admin-vue#readme">
             <el-dropdown-item><i class="el-icon-document"></i>Docs</el-dropdown-item>
           </a>
           <el-dropdown-item @click.native="setting = true">
