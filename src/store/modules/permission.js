@@ -128,7 +128,7 @@ export function generaMenu(data) {
       children: item.children && item.children.length > 0 ? generaMenu(item.children) : [],
       name: firstUpperCase(item.path),//item.menuName,由于要和vue页面的name匹配，所以要首字母转换大写
       //meta: item.meta
-      meta: { title: item.menuName, icon: item.icon, noCache: false, id: item.menuId, roles: ['admin'] }
+      meta: { title: item.menuName, icon: item.icon, noCache: (item.isCache==0?false:true), id: item.menuId }
     }
     // if (item.children&&item.children.length > 0) {
     //   generaMenu(menu.children, item.children)
