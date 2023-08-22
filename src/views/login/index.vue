@@ -64,6 +64,7 @@
             />
           </span>
           <el-input
+            class="validateCode-item-input"
             v-model="loginForm.validateCode"
             auto-complete="off"
             placeholder="验证码"
@@ -297,6 +298,10 @@ $light_gray: #eee;
   .validateCode-div-item {
     flex-grow: 1;
     flex-shrink: 1;
+    width: min-content;
+  }
+  .validateCode-item-input{
+    width: 70%;
   }
   .login-code {
     width: fit-content;
